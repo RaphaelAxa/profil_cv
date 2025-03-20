@@ -2,7 +2,6 @@ from lib.read_pdf import read_pdf
 from lib.llm import extract_cv
 from dotenv import load_dotenv
 from pathlib import Path
-import streamlit as st
 from groq import Groq
 import pandas as pd
 import instructor
