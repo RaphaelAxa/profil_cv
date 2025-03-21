@@ -4,3 +4,4 @@ tmp/
 *.docx
 .env
 __pycache__/
+*.txt
