@@ -5,3 +5,4 @@ tmp/
 .env
 __pycache__/
 *.txt
+gliner_model_multi/
