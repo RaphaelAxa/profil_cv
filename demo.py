@@ -1,12 +1,13 @@
+from langchain_community.document_loaders import PyPDFLoader
+from streamlit_pdf_viewer import pdf_viewer
 from lib.read_file import read_cv
 from lib.llm import extract_cv
 import streamlit as st
 from groq import Groq
 import pandas as pd
 import instructor
+import tempfile
 import json
-import os
-from streamlit_pdf_viewer import pdf_viewer
 
 
 def main():
@@ -22,12 +23,14 @@ def main():
         binary_data = uploaded_file.getvalue()
         pdf_viewer(input=binary_data, width=700)
 
-        temp_file = f"tmp/{uploaded_file.name}"
-
-        with open(temp_file, "wb") as file:
-            file.write(binary_data)
+        with tempfile.NamedTemporaryFile(
+            suffix=".pdf", dir=".", mode="wb", delete=False
+        ) as fp:
+            fp.write(binary_data)
+            temp_file = fp.name
 
         cv_text = read_cv(temp_file)
+        fp.close()
 
         client = instructor.from_groq(
             Groq(api_key=st.secrets.GROQ_API_KEY), mode=instructor.Mode.JSON
