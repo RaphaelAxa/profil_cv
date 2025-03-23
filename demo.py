@@ -1,6 +1,5 @@
 from lib.read_file import read_cv
 from lib.llm import extract_cv
-from dotenv import load_dotenv
 import streamlit as st
 from groq import Groq
 import pandas as pd
@@ -10,9 +9,6 @@ import os
 from streamlit_pdf_viewer import pdf_viewer
 
 
-load_dotenv()
-
-
 def main():
     st.write("""
     # Extraction d'informations de CVs et génération du profil
@@ -20,8 +16,6 @@ def main():
     """)
 
     # Configure Groq API
-    groq_api_key = os.getenv("GROQ_API_KEY")
-
     uploaded_file = st.file_uploader("Importer votre CV", type="pdf")
 
     if uploaded_file:
@@ -35,7 +29,9 @@ def main():
 
         cv_text = read_cv(temp_file)
 
-        client = instructor.from_groq(Groq(), mode=instructor.Mode.JSON)
+        client = instructor.from_groq(
+            Groq(api_key=st.secrets.GROQ_API_KEY), mode=instructor.Mode.JSON
+        )
 
         sys_prompt = """Tu es une IA experte dans l'analyse des CV de candidats. 
 
