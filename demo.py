@@ -5,6 +5,7 @@ from lib.llm import extract_cv
 import streamlit as st
 from groq import Groq
 import pandas as pd
+from pathlib import Path
 import instructor
 import tempfile
 import json
@@ -17,14 +18,16 @@ def main():
     """)
 
     # Configure Groq API
-    uploaded_file = st.file_uploader("Importer votre CV", type="pdf")
+    uploaded_file = st.file_uploader("Importer votre CV", type=["pdf", "docx"])
 
     if uploaded_file:
+        extension = Path(uploaded_file.name).suffix
         binary_data = uploaded_file.getvalue()
-        pdf_viewer(input=binary_data, width=700)
+        if extension == ".pdf":
+            pdf_viewer(input=binary_data, width=700)
 
         with tempfile.NamedTemporaryFile(
-            suffix=".pdf", dir=".", mode="wb", delete=False
+            suffix=extension, dir=".", mode="wb", delete=False
         ) as fp:
             fp.write(binary_data)
             temp_file = fp.name
@@ -110,11 +113,17 @@ def main():
         st.write("## Profil du candidat :")
         st.write(response["reponse_finale"])
         st.write("## Informations extraites du CV :")
+        st.write("### Informations personnelles du candidat :")
         st.dataframe(df_informations)
+        st.write("### Formations suivies par le candidat :")
         st.dataframe(df_formations)
+        st.write("### Expériences professionnelles du candidat :")
         st.dataframe(df_experiences)
+        st.write("### Compétences du candidat :")
         st.dataframe(df_competences)
+        st.write("### Langues :")
         st.dataframe(df_langues)
+        st.write("### Hobbies :")
         st.dataframe(df_centres_interets)
 
 
